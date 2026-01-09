@@ -1,5 +1,20 @@
-export default function PizzaCard({pizzaname,pizzaprice,pizzadescription,pizzaIngredients,pizzaToppings,pizzaimageurl,pizzatype}){
-    const isVeg = pizzatype==="veg"
+import axios from "axios";
+export default function PizzaCard({pizzaname,pizzaprice,pizzadescription,pizzaIngredients,pizzaToppings,pizzaimageurl,pizzatype,pizzaid}){
+    const isVeg = pizzatype==="veg";
+    
+    let addtoCart=async()=>{
+        const item={
+            itemType:pizzatype,
+            pizzaId:pizzaid,
+            name:pizzaname,
+            image:pizzaimageurl,
+            price:pizzaprice,
+        };
+        await axios.post('http://localhost:3004/api/cart/insert',item).then((res)=>{
+            console.log("Details inserted succesfully",res);
+            
+        })
+    }
     return(
         <>
         <div className="container d-flex justify-content-between shadow m-2 rounded p-2" style={{"max-width":"580px"}}>
@@ -20,7 +35,7 @@ export default function PizzaCard({pizzaname,pizzaprice,pizzadescription,pizzaIn
                  style={{"width":"180px", "height":"120px"}} 
                  alt="Pizzaimg" />
                 <br />
-                <button className="btn btn-warning text-white mt-4 ">Add to Cart</button>
+                <button className="btn btn-warning text-white mt-4 " onClick={addtoCart} >Add to Cart</button>
             </div>
         </div>
         

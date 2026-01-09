@@ -4,7 +4,7 @@ let Schema= mongoose.Schema;
 let cartSchema=new Schema({
    itemType:{
      type:String,
-     enum:["pizza","ingredient"],
+     enum:["veg","nonveg"],
      required:true
    },
    pizzaId:{
@@ -12,13 +12,9 @@ let cartSchema=new Schema({
       ref:"Pizza",
       default:null
    },
-   ingredientId:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"Ingredient",
-    default:null
-   },
    name:{
     type:String,
+    unique:true,
     required:true,
     trim:true
    },
@@ -36,8 +32,7 @@ let cartSchema=new Schema({
     min:1
    },
    totalPrice:{
-    type:Number,
-    required:true
+    type:Number
    },
 
 });

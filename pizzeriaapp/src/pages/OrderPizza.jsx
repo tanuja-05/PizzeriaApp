@@ -37,6 +37,7 @@ export default function OrderPizza(){
                pizzaToppings={item.topping}
                pizzaimageurl={item.image}
                pizzatype={item.type}
+               pizzaid={item._id}
                />
                </div>
             );

@@ -8,8 +8,10 @@ import Footer from './components/Footer.jsx';
 import OrderPizza from './pages/OrderPizza.jsx';
 import PizzaCard from './components/PizzaCard.jsx';
 import BuildPizza from './pages/BuildPizza.jsx';
+import CartItem from './components/CartItem.jsx';
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
+    {/* <CartItem/> */}
   </StrictMode>,
 )

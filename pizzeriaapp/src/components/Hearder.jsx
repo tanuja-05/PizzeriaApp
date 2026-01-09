@@ -1,8 +1,12 @@
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 
 import logo from '../assets/Images/logo.jpeg'
 
 export default function Header(){
+    const navigator = useNavigate();
+     let goToCart=()=>{
+        navigator("/Cart")
+     }
     return(
         <>
         <nav className="navbar bg-black text-white p-2">
@@ -16,7 +20,7 @@ export default function Header(){
                      <Link to="/BuildPizza" className="nav-link fs-5">Build Ur Pizza</Link>
                 </div>
                  <div className="right d-flex justify-content-end col-8">
-                      <button className="btn btn-warning text-white">Shopping Cart</button>
+                      <button className="btn btn-warning text-white"  onClick={goToCart} >Shopping Cart</button>
                  </div>
             </div>
         </nav>

@@ -58,6 +58,7 @@ export default function Cart(){
                   itemdecrease={()=>decreaseQty(index)}
                   itemincrease={()=>increaseQty(index)}
                   deleteItem={()=>removeItem(item._id)}
+                  customIngredients={item.customIngredients}
           />
             );
         })

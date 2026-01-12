@@ -8,7 +8,7 @@ export default function OrderPizza(){
     const[pizzaData,setPizzaData]=useState([]);
 
      let getAllPizza=()=>{
-        axios.get(`http://localhost:3002/api/pizza/view`).then((res)=>{
+        axios.get(`http://localhost:3009/api/pizza/view`).then((res)=>{
             return res.data;
         }).then((data)=>{
            if(data.status){
@@ -22,7 +22,7 @@ export default function OrderPizza(){
          getAllPizza();
      },[])
     return(
-       <>
+       <div className="col-md-10 align-self-center mx-auto">
        <Header/>
          <div className='row '>
             {
@@ -45,7 +45,7 @@ export default function OrderPizza(){
          }
          </div>
          <Footer/>
-       </>
+       </div>
      
     );
 }

@@ -1,19 +1,10 @@
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 export default function PizzaCard({pizzaname,pizzaprice,pizzadescription,pizzaIngredients,pizzaToppings,pizzaimageurl,pizzatype,pizzaid}){
     const isVeg = pizzatype==="veg";
-    
-    let addtoCart=async()=>{
-        const item={
-            itemType:pizzatype,
-            pizzaId:pizzaid,
-            name:pizzaname,
-            image:pizzaimageurl,
-            price:pizzaprice,
-        };
-        await axios.post('http://localhost:3004/api/cart/insert',item).then((res)=>{
-            console.log("Details inserted succesfully",res);
-            
-        })
+    let navigateTo=useNavigate();
+    let goToBuildPizza=()=>{
+        navigateTo(`/BuildPizza/${pizzaid}`);
     }
     return(
         <>
@@ -35,7 +26,7 @@ export default function PizzaCard({pizzaname,pizzaprice,pizzadescription,pizzaIn
                  style={{"width":"180px", "height":"120px"}} 
                  alt="Pizzaimg" />
                 <br />
-                <button className="btn btn-warning text-white mt-4 " onClick={addtoCart} >Add to Cart</button>
+                <button className="btn btn-warning text-white mt-4 " onClick={goToBuildPizza} >Add to Cart</button>
             </div>
         </div>
         

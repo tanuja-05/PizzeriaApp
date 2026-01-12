@@ -14,7 +14,6 @@ let cartSchema=new Schema({
    },
    name:{
     type:String,
-    unique:true,
     required:true,
     trim:true
    },
@@ -34,7 +33,9 @@ let cartSchema=new Schema({
    totalPrice:{
     type:Number
    },
-
+   customIngredients:{
+      type:[String]
+   }
 });
 
 let cartModel=mongoose.model('shoppingcart',cartSchema);

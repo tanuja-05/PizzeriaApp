@@ -4,29 +4,28 @@ export default function PizzaCard({pizzaname,pizzaprice,pizzadescription,pizzaIn
     const isVeg = pizzatype==="veg";
     let navigateTo=useNavigate();
     let goToBuildPizza=()=>{
-        navigateTo(`/BuildPizza/${pizzaid}`);
+        navigateTo(`/build-pizza/${pizzaid}`);
     }
     return(
         <>
-        <div className="container d-flex justify-content-between shadow m-2 rounded p-2" style={{"max-width":"580px"}}>
+        <div className="container d-flex justify-content-between shadow m-2 rounded p-2" style={{maxWidth:"580px"}}>
             <div className="p-2">
-                <h4>{pizzaname}</h4>
-                <div className=" m-3" style={{"width":"20px","height":"20px","background":isVeg?"green":"red"}}></div>
-                <p className="m-2">₹{pizzaprice}</p>
+                <h5>{pizzaname}</h5>
+                <p>{pizzadescription}</p>
+                <p>Rs. {pizzaprice}</p>
             </div>
             <div className="p-2">
-                <p>{pizzadescription}</p>
-                <p><h5>Ingredients</h5>{pizzaIngredients.join(", ")}</p>
-                <p><h5>Toppings</h5>{pizzaToppings.join(", ")}</p>
+                <div className=" m-3" style={{width:"20px",height:"20px",background:isVeg?"green":"red"}}></div>
+                <p className="m-2 fw-bold">₹{pizzaprice}</p>
             </div>
             <div className="p-2">
                 <img 
                  src={pizzaimageurl} 
                  className="img-fluid rounded"
-                 style={{"width":"180px", "height":"120px"}} 
+                 style={{width:"180px", height:"120px"}} 
                  alt="Pizzaimg" />
                 <br />
-                <button className="btn btn-warning text-white mt-4 " onClick={goToBuildPizza} >Add to Cart</button>
+                <button className="btn btn-warning text-white mt-4 " style={{width:"100px"}} onClick={goToBuildPizza} >Add to Cart</button>
             </div>
         </div>
         

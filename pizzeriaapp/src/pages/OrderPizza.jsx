@@ -26,23 +26,24 @@ export default function OrderPizza(){
        <Header/>
          <div className='row '>
             {
-           pizzaData.map((item,index)=>{
-            return(
-               <div className='col-md-6'> 
-                   <PizzaCard
-               pizzaname={item.name}
-               pizzaprice={item.price}
-               pizzadescription={item.description}
-               pizzaIngredients={item.ingredients}
-               pizzaToppings={item.topping}
-               pizzaimageurl={item.image}
-               pizzatype={item.type}
-               pizzaid={item._id}
-               />
-               </div>
-            );
-           })
-         }
+              pizzaData.map((item,index)=>{
+                return(
+                  <div className='col-md-6' key={item._id}> 
+                    <PizzaCard
+                      key={item._id}
+                      pizzaname={item.name}
+                      pizzaprice={item.price}
+                      pizzadescription={item.description}
+                      pizzaIngredients={item.ingredients}
+                      pizzaToppings={item.topping}
+                      pizzaimageurl={item.image}
+                      pizzatype={item.type}
+                      pizzaid={item._id}
+                    />
+                  </div>
+                );
+              })
+            }
          </div>
          <Footer/>
        </div>

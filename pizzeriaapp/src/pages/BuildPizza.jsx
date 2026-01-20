@@ -1,116 +1,151 @@
+import { isLoggedIn } from "../utils/auth";
 import axios from "axios";
 import { useEffect,useState } from "react";
 import Header from "../components/Hearder";
 import Footer from "../components/Footer";
 import {useParams, useNavigate} from 'react-router-dom';
+import { toast } from "react-toastify";
 
-export default function BuildPizza(){
+export default function BuildPizza() {
+  let navigateTo = useNavigate();
 
-     let navigateTo = useNavigate();
-     const[ingredientData,SetIngredientData]=useState([]);
-     const[totalCost,setTotalCost]=useState(0);
+  const [ingredientData, SetIngredientData] = useState([]);
 
-     let pizzaId=useParams().pizzaid;
+  const[singlePizzaData,setsinglePizzaData] = useState({
+    name:"",
+    image:"",
+    price:"",
+    type:"",
+    customIngredients:[]
+  })
+  console.log(singlePizzaData.customIngredients);
+  
+  const [totalCost, setTotalCost] = useState(0);
+  let pizzaId = useParams().pizzaid;
 
-     const[singlePizzadata,setSinglePizzadata]=useState({
-        name:"",
-        image:"",
-        price:"",
-        type:"",
-        customIngredients:[]
-     })
+  let getPizzaData = ()=>{
+    axios.get(`http://localhost:3009/api/pizza/view/${pizzaId}`).then((res)=>{
+      return res.data;
+    }).then((data)=>{
+      if(data.status){
+        setsinglePizzaData(
+          prev=>({
+            ...data.getRes,
+            customIngredients:prev.customIngredients || []
+          })
+        );
+        setTotalCost(data.getRes.price);
+      }
+    }).catch((err)=>console.log(err));
+  }
 
-    let getPizzaData=()=>{
-        axios.get(`http://localhost:3009/api/pizza/view/${pizzaId}`).then((res)=>{
-            return res.data;    
-        }).then((data)=>{
-            if(data.status){
-                setSinglePizzadata(prev=>({
-                    ...data.getRes,
-                    customIngredients:prev.customIngredients || []
-                }));
-                setTotalCost(data.getRes.price)
-            }
-        })
+  let getAllIngredients = () => {
+    axios
+      .get(`http://localhost:3003/api/ingredients/view`)
+      .then((res) => res.data)
+      .then((data) => {
+        if (data.status) {
+          // API returns list in `getIngredients`
+          SetIngredientData(data.getIngredients);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
 
+  useEffect(() => {
+    getAllIngredients();
+    getPizzaData();
+  }, [pizzaId]);
+
+  let handleIngredientChange=(ingredient,isChecked)=>{
+    setsinglePizzaData(prev=>({
+      ...prev,
+      customIngredients:isChecked
+      ? [...prev.customIngredients,ingredient.tname]
+      : prev.customIngredients.filter(
+        item=>item!==ingredient.tname
+      )
     }
+    ))
 
-    let getAllIngredients=()=>{
-        axios.get(`http://localhost:3003/api/ingredients/view`).then((res)=>{
-            return res.data;
-        }).then((data)=>{
-            if(data.status){
-               SetIngredientData(data.getIngredients)
-            }
-        })
-    }
-    useEffect(()=>{
-        getAllIngredients();
-        getPizzaData();
-    },[])
-
-    let handleIngredientChange=(ingredients,isChecked)=>{
-       setSinglePizzadata(prev=>({
-        ...prev,
-        customIngredients:isChecked?[...prev.customIngredients,ingredients.tname]:prev.customIngredients.filter(item=>item!==ingredients.tname)
-       }))
-    
-     setTotalCost(prev=>
-        isChecked?prev + ingredients.price:prev-ingredients.price
-     )
-    
-    }
-
-     let addToCart=async()=>{
-       let item={
-            pizzaId:pizzaId,
-            itemType:singlePizzadata.type,
-            name:singlePizzadata.name,
-            image:singlePizzadata.image,
-            price:totalCost,
-            customIngredients:singlePizzadata.customIngredients
-        };
-        await axios.post('http://localhost:3004/api/cart/insert',item).then(()=>{
-            alert("Pizza Added to Cart");
-        })
-        navigateTo('/Cart')
-    }
-    
-    return(
-       <>
-       <Header/>
-      <div className="col-md-8 align-self-center mx-auto">
-          <p className="text-center mt-3 mb-6">Pizzeria now gives you the option to build your own pizza. Customize your pizza by choosing the list of ingredients below.</p>
-        <div className="p-z pt-1">
-       <table className="table table-bordered text-center align-middle ">
-       {
-        ingredientData.map((item,index)=>{
-            return(
-                <>
-                   <tbody>
-                     <tr>
-                        <td><img src={item.image} style={{"width":"100px","height":"100px"}} alt="" /></td>
-                        <td className="fw-bold">{item.tname} &nbsp; ₹{item.price}</td>
-                        <td className='text-warning'>
-                        <input 
-                        type="checkbox"
-                         name="Add" 
-                         value={singlePizzadata.Add}
-                        onChange={(e)=>handleIngredientChange(item,e.target.checked)}
-                        id=""/> Add
-                        </td>
-                     </tr>
-                 </tbody>
-                </>
-            )
-        })
-       }
-       <td className="fw-bold">Total Cost: {totalCost}</td>
-       <td><button className="btn text-warning btn-dark mt-2" onClick={addToCart}>Go to Cart</button></td>
-       </table> 
-       </div>
-      </div>
-      <Footer/>
-       </>
+    setTotalCost(prev=>
+      isChecked? prev + ingredient.price : prev-ingredient.price
     );
+  }
+
+  let addToCart = async()=>{
+    if (!isLoggedIn()) {
+      navigateTo("/login");
+      return;
+    }
+    const item={
+      pizzaId: pizzaId,
+      itemType:singlePizzaData.type,
+      name: singlePizzaData.name,
+      image: singlePizzaData.image,
+      price: totalCost,
+      customIngredients: singlePizzaData.customIngredients
+    };
+    await axios.post(`http://localhost:3004/api/cart/insert`,item).then(()=>{
+      toast.success("Pizza is added to cart",{
+        position:"top-right"
+      });
+    }).catch((err)=>console.log(err));
+    navigateTo('/cart');
+  }
+
+  return (
+    <>
+      <Header />
+      <div className="col-md-6 align-self-center mx-auto">
+        <p className="text-center p-2">
+          Pizzeria now gives you the option to build your own pizza. Customize
+          your pizza by choosing the list of ingredients below.
+        </p>
+        <div className="p-5 pt-2 pb-2">
+          <table className="table table-bordered text-center align-middle">
+            <tbody className="table-striped">
+              {ingredientData.map((item, index) => {
+                return (
+                  <tr key={item._id}>
+                    <td>
+                      <img
+                        src={item.image}
+                        style={{ width: "60px", height: "60px" }}
+                        alt=""
+                      />
+                    </td>
+                    <td className="fw-bold">
+                      {item.tname} &nbsp; ₹{item.price}
+                    </td>
+                    <td className="text-warning">
+                      <input
+                        type="checkbox"
+                        name="Add"
+                        onChange={(e) =>
+                          handleIngredientChange(item, e.target.checked)
+                        }
+                      />
+                      &nbsp;Add
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td className="fw-bold">Total cost: ₹{totalCost} </td>
+                <td>
+                  <button className="btn btn-dark text-white mt-2" onClick={addToCart}>
+                    Go to Cart
+                  </button>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+      <Footer />
+    </>
+  );
 }
